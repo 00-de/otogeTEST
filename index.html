@@ -699,7 +699,7 @@ box-shadow: 0 0 20px white;
 
 <div class="score"
 id="score">
-Score : 0
+Score : 0.00
 </div>
 
 </div>
@@ -955,6 +955,16 @@ btn.innerText = "✕";
 }
 );
 
+/* スコア表示フォーマット（カンマ区切り・小数2桁） */
+function formatScore(val){
+const fixed = val.toFixed(2);
+const parts = fixed.split(".");
+parts[0] = parts[0].replace(
+/\B(?=(\d{3})+(?!\d))/g, ","
+);
+return parts.join(".");
+}
+
 /* 曲データ */
 const SONGS = [
 {
@@ -1180,7 +1190,7 @@ totalNotes = 0;
 hitNotes = 0;
 
 scoreText.innerText =
-"Score : 0";
+"Score : 0.00";
 
 comboText.innerText =
 "0";
@@ -1310,7 +1320,7 @@ const deduct = 1000;
 totalDeduct += deduct;
 score = Math.max(0, score - deduct);
 scoreText.innerText =
-"Score : " + score;
+"Score : " + formatScore(score);
 
 }
 
@@ -1350,7 +1360,7 @@ const deduct = 500;
 totalDeduct += deduct;
 score = Math.max(0, score - deduct);
 scoreText.innerText =
-"Score : " + score;
+"Score : " + formatScore(score);
 
 return;
 
@@ -1422,7 +1432,7 @@ const deduct = 1000;
 totalDeduct += deduct;
 score = Math.max(0, score - deduct);
 scoreText.innerText =
-"Score : " + score;
+"Score : " + formatScore(score);
 
 return;
 
@@ -1452,13 +1462,15 @@ break;
 }
 }
 
-/* スコア加算（整数） */
-score += Math.round(addScore * comboBonus);
+/* スコア加算（小数2桁） */
+score = Math.round(
+(score + addScore * comboBonus) * 100
+) / 100;
 
 comboText.innerText = combo;
 
 scoreText.innerText =
-"Score : " + score;
+"Score : " + formatScore(score);
 
 /* ノーツ削除 */
 note.dataset.hit = "true";
@@ -1748,7 +1760,7 @@ setTimeout(()=>{
 overlay.style.display = "none";
 
 /* リザルト表示 */
-resultScoreEl.innerText = score;
+resultScoreEl.innerText = formatScore(score);
 resultComboEl.innerText = maxCombo;
 resultMissEl.innerText = miss;
 resultDeductEl.innerText = "-" + totalDeduct;
