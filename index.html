@@ -331,6 +331,19 @@ box-shadow:
 0 0 35px #8ce8ff;
 }
 
+/* ダブルノート（上級） */
+.note.double{
+background:
+linear-gradient(
+90deg,
+#ffcc00,
+#ff6600
+);
+box-shadow:
+0 0 15px #ff6600,
+0 0 35px #ff6600;
+}
+
 /* タップ演出 */
 .tap-effect{
 position:absolute;
@@ -1099,6 +1112,7 @@ let gdStreak = 0;
 
 let started = false;
 let paused = false;
+let hardMode = false;
 
 /* 難易度 */
 let noteSpeed = 3;
@@ -1155,16 +1169,30 @@ i < songLength;
 i += noteInterval
 ){
 
+if(hardMode && Math.random() < 0.4){
+
+/* ダブルノート：異なる2レーンを同時に */
+const laneA =
+Math.floor(Math.random() * 4);
+
+let laneB;
+do{
+laneB =
+Math.floor(Math.random() * 4);
+}while(laneB === laneA);
+
+notes.push({ time:i, lane:laneA, double:true });
+notes.push({ time:i, lane:laneB, double:true });
+
+}else{
+
 notes.push({
-
 time:i,
-
-lane:
-Math.floor(
-Math.random() * 4
-)
-
+lane: Math.floor(Math.random() * 4),
+double: false
 });
+
+}
 
 }
 
@@ -1307,6 +1335,10 @@ const note =
 document.createElement("div");
 
 note.classList.add("note");
+
+if(noteData.double){
+note.classList.add("double");
+}
 
 note.dataset.hit = "false";
 
@@ -1761,6 +1793,7 @@ startMenuEl.style.display = "flex";
 }
 function setEasyMode(){
 
+hardMode = false;
 noteSpeed = 2;
 noteInterval = 650;
 
@@ -1774,6 +1807,7 @@ judgeText.innerText =
 /* 上級 */
 function setHardMode(){
 
+hardMode = true;
 noteSpeed = 5;
 noteInterval = 300;
 
