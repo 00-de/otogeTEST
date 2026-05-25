@@ -907,6 +907,13 @@ style="margin-top:4px;">
 src="kaze.mp3">
 </audio>
 
+<!-- SE -->
+<audio id="se-combo30"  src="combo30.mp3"  preload="auto"></audio>
+<audio id="se-combo50"  src="combo50.mp3"  preload="auto"></audio>
+<audio id="se-combo70"  src="combo70.mp3"  preload="auto"></audio>
+<audio id="se-combo100" src="combo100.mp3" preload="auto"></audio>
+<audio id="se-miss"     src="miss.mp3"     preload="auto"></audio>
+
 <script>
 
 /* 全画面 */
@@ -963,6 +970,14 @@ parts[0] = parts[0].replace(
 /\B(?=(\d{3})+(?!\d))/g, ","
 );
 return parts.join(".");
+}
+
+/* SE再生 */
+function playSE(id){
+const el = document.getElementById(id);
+if(!el) return;
+el.currentTime = 0;
+el.play().catch(()=>{});
 }
 
 /* 曲データ */
@@ -1324,8 +1339,7 @@ combo;
 judgeText.style.color = "#ff6060";
 judgeText.innerText =
 "MISS ❌";
-
-/* ノート通過ミス減点 -300 */
+playSE("se-miss");
 const deduct = 300;
 totalDeduct += deduct;
 score = Math.max(0, score - deduct);
@@ -1368,6 +1382,7 @@ combo = 0;
 comboText.innerText = combo;
 judgeText.style.color = "#ff6060";
 judgeText.innerText = "MISS ❌";
+playSE("se-miss");
 
 exStreak = 0; pfStreak = 0;
 grStreak = 0; gdStreak = 0;
@@ -1508,6 +1523,7 @@ addScore += streakBonus;
 
 judgeText.style.color = "#ff6060";
 judgeText.innerText = "MISS ❌";
+playSE("se-miss");
 
 miss++;
 combo = 0;
@@ -1573,8 +1589,36 @@ note.remove();
 /* 演出 */
 tapEffect(lane, judgeText.style.color);
 
-/* コンボ演出 */
-if(combo >= 50){
+/* コンボ演出 + SE */
+if(combo >= 100 && combo % 100 === 0){
+
+playSE("se-combo100");
+judgeText.style.color = "#ff66cc";
+judgeText.innerText =
+"🔥 AMAZING COMBO 🔥";
+
+}else if(combo === 70){
+
+playSE("se-combo70");
+judgeText.style.color = "#ff66cc";
+judgeText.innerText =
+"70 COMBO 🔥";
+
+}else if(combo === 50){
+
+playSE("se-combo50");
+judgeText.style.color = "#ff66cc";
+judgeText.innerText =
+"50 COMBO 🔥";
+
+}else if(combo === 30){
+
+playSE("se-combo30");
+judgeText.style.color = "#ffe066";
+judgeText.innerText =
+"30 COMBO 🔥";
+
+}else if(combo >= 50){
 
 judgeText.style.color = "#ff66cc";
 judgeText.innerText =
