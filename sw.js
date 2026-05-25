@@ -1,8 +1,9 @@
-const CACHE = "daydream-beats-v1";
+const CACHE = "daydream-beats-v2";
 
 const FILES = [
   "./index.html",
   "./kaze.mp3",
+  "./きらめく方程式.mp3",
   "./bg.jpg"
 ];
 
