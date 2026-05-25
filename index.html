@@ -1,10 +1,6 @@
-<!-- 今の完成コードを絶対維持 -->
-<!-- 曲選択あり版・既存仕様維持版 -->
-
 <!DOCTYPE html>
 <html lang="ja">
 <head>
-
 <meta charset="UTF-8">
 
 <meta name="viewport"
@@ -12,12 +8,13 @@ content="
 width=device-width,
 initial-scale=1.0,
 maximum-scale=1.0,
-minimum-scale=1.0,
-user-scalable=no,
-viewport-fit=cover
+user-scalable=no
 ">
 
-<title>DayDream Beats!! Ultimate</title>
+<title>DayDream Beats!!</title>
+
+<meta name="theme-color"
+content="#001d3d">
 
 <style>
 
@@ -33,18 +30,7 @@ width:100%;
 height:100%;
 overflow:hidden;
 background:black;
-
 touch-action:none;
-overscroll-behavior:none;
-}
-
-body{
-background:
-linear-gradient(
-to bottom,
-#58c6ff,
-#001d3d
-);
 }
 
 #game{
@@ -52,113 +38,102 @@ position:relative;
 width:100vw;
 height:100vh;
 overflow:hidden;
+
+background:
+linear-gradient(
+to bottom,
+#58c6ff,
+#001d3d
+);
+
 color:white;
 }
-
-/* 背景 */
 
 .bg{
 position:absolute;
 width:100%;
 height:100%;
-
 background:
-url("bg.jpg")
+url('bg.jpg')
 center/cover;
-
 opacity:0.35;
 }
 
-/* 上UI */
-
 .top-ui{
 position:absolute;
-
 top:15px;
 left:0;
-
 width:100%;
-
-padding:0 15px;
-
+padding:0 55px 0 15px;
 display:flex;
 justify-content:space-between;
 align-items:center;
-
 z-index:100;
 }
 
 .song-title{
 font-size:18px;
 font-weight:bold;
-
-text-shadow:
-0 0 10px black;
+max-width:60%;
+text-shadow:0 0 10px black;
 }
 
 .score{
-font-size:22px;
+font-size:18px;
 font-weight:bold;
-
-text-shadow:
-0 0 12px white;
 }
 
-/* コンボ */
+.controls{
+position:absolute;
+top:60px;
+left:50%;
+transform:translateX(-50%);
+display:flex;
+gap:8px;
+z-index:100;
+}
+
+.control-btn{
+padding:8px 14px;
+border:none;
+border-radius:12px;
+background:white;
+color:#222;
+font-size:13px;
+font-weight:bold;
+box-shadow:0 0 10px white;
+}
 
 #combo{
 position:absolute;
-
-bottom:78px;
+bottom:82px;
 left:50%;
-
-transform:
-translateX(-50%);
-
-font-size:42px;
+transform:translateX(-50%);
+font-size:36px;
 font-weight:bold;
-
 z-index:100;
-
-text-shadow:
-0 0 20px white;
+text-shadow:0 0 20px white;
 }
-
-/* 判定 */
 
 #judge{
 position:absolute;
-
 bottom:90px;
 right:15px;
-
-font-size:18px;
+font-size:15px;
 font-weight:bold;
-
 z-index:100;
-
 text-align:right;
-
-text-shadow:
-0 0 10px currentColor;
+text-shadow:0 0 8px currentColor;
 }
-
-/* レーン */
 
 .lanes{
 position:absolute;
-
 bottom:0;
 left:50%;
-
-transform:
-translateX(-50%);
-
+transform:translateX(-50%);
 width:95%;
 max-width:520px;
-
 height:100%;
-
 display:flex;
 }
 
@@ -173,16 +148,11 @@ border-right:
 2px solid rgba(255,255,255,0.15);
 }
 
-/* 判定ライン */
-
 .hit-line{
 position:absolute;
-
 bottom:130px;
-
 width:100%;
 height:10px;
-
 background:white;
 
 box-shadow:
@@ -190,16 +160,11 @@ box-shadow:
 0 0 40px white;
 }
 
-/* ノーツ */
-
 .note{
 position:absolute;
-
 width:80%;
 height:24px;
-
 left:10%;
-
 border-radius:15px;
 
 background:
@@ -214,15 +179,14 @@ box-shadow:
 0 0 35px #8ce8ff;
 }
 
-/* タップエフェクト */
-
 .tap-effect{
 position:absolute;
-
 bottom:110px;
-
 width:100%;
 height:60px;
+
+background:
+rgba(255,255,255,0.5);
 
 animation:flash 0.25s;
 }
@@ -241,11 +205,8 @@ transform:scaleY(2);
 
 }
 
-/* スタートメニュー */
-
 .start-menu{
 position:absolute;
-
 top:50%;
 left:50%;
 
@@ -254,151 +215,65 @@ translate(-50%,-50%);
 
 display:flex;
 flex-direction:column;
-
 gap:15px;
-
 z-index:300;
 }
 
-/* ボタン */
+.song-select-title{
+font-size:16px;
+font-weight:bold;
+letter-spacing:3px;
+color:#aee8ff;
+text-shadow:0 0 10px #aee8ff;
+text-align:center;
+}
+
+.song-list{
+display:flex;
+flex-direction:column;
+gap:10px;
+}
+
+.song-btn{
+padding:14px 20px;
+border:none;
+border-radius:16px;
+background:rgba(255,255,255,0.15);
+color:white;
+font-size:15px;
+font-weight:bold;
+text-align:left;
+}
+
+.song-btn.selected{
+background:rgba(140,232,255,0.3);
+box-shadow:0 0 20px rgba(140,232,255,0.6);
+}
+
+.mode-select-row{
+display:flex;
+gap:8px;
+justify-content:center;
+}
+
+.mode-btn{
+padding:8px 14px;
+border:none;
+border-radius:12px;
+background:#ffffffcc;
+font-size:13px;
+font-weight:bold;
+}
 
 .menu-btn{
 padding:20px 35px;
-
 font-size:24px;
 font-weight:bold;
-
 border:none;
 border-radius:20px;
-
 background:white;
 color:#333;
-
-box-shadow:
-0 0 25px white;
-}
-
-/* 曲選択 */
-
-.song-select{
-padding:18px;
-
-font-size:20px;
-font-weight:bold;
-
-border:none;
-border-radius:20px;
-
-background:white;
-color:#222;
-
-box-shadow:
-0 0 20px white;
-}
-
-/* FULL COMBO */
-
-#fullcombo{
-position:absolute;
-
-top:42%;
-left:50%;
-
-transform:
-translate(-50%,-50%);
-
-font-size:44px;
-font-weight:bold;
-
-display:none;
-
-color:gold;
-
-z-index:200;
-
-text-shadow:
-0 0 25px gold,
-0 0 50px gold;
-
-animation:pulse 1s infinite;
-}
-
-@keyframes pulse{
-
-0%{
-transform:
-translate(-50%,-50%)
-scale(1);
-}
-
-50%{
-transform:
-translate(-50%,-50%)
-scale(1.1);
-}
-
-100%{
-transform:
-translate(-50%,-50%)
-scale(1);
-}
-
-}
-
-/* リザルト */
-
-#result-screen{
-position:absolute;
-
-top:0;
-left:0;
-
-width:100%;
-height:100%;
-
-display:none;
-
-flex-direction:column;
-justify-content:center;
-align-items:center;
-
-gap:16px;
-
-background:
-rgba(0,0,0,0.88);
-
-z-index:500;
-}
-
-.result-title{
-font-size:42px;
-font-weight:bold;
-
-color:#8ce8ff;
-
-text-shadow:
-0 0 20px #8ce8ff;
-}
-
-.result-text{
-font-size:24px;
-font-weight:bold;
-}
-
-.result-btn{
-padding:16px 30px;
-
-font-size:20px;
-font-weight:bold;
-
-border:none;
-border-radius:20px;
-
-background:white;
-color:#222;
-
-box-shadow:
-0 0 20px white;
+box-shadow:0 0 25px white;
 }
 
 </style>
@@ -410,435 +285,247 @@ box-shadow:
 
 <div class="bg"></div>
 
-<!-- 上UI -->
-
 <div class="top-ui">
 
-<div class="song-title"
-id="songName">
-🎵 DayDream Beats!!
+<div class="song-title">
+🎵 風になる合図 / 蓮
 </div>
 
 <div class="score"
 id="score">
-Score : 0
+Score : 0.00
 </div>
 
 </div>
 
-<!-- 判定 -->
+<div class="controls">
+
+<button class="control-btn"
+onclick="pauseGame()">
+⏸ 一時停止
+</button>
+
+<button class="control-btn"
+onclick="resetScore()">
+🔄 リセット
+</button>
+
+</div>
 
 <div id="judge">
 READY
 </div>
 
-<!-- コンボ -->
+<div class="start-menu"
+id="startMenu">
+
+<div class="song-select-title">
+🎵 SELECT SONG
+</div>
+
+<div class="song-list">
+
+<button class="song-btn selected"
+id="songBtn0"
+onclick="selectSong(0)">
+
+風になる合図 / 蓮
+
+</button>
+
+<button class="song-btn"
+id="songBtn1"
+onclick="selectSong(1)">
+
+きらめく方程式 / DayDream プラス
+
+</button>
+
+</div>
+
+<div class="mode-select-row">
+
+<button class="mode-btn"
+onclick="setEasyMode()">
+
+🌟 初級
+
+</button>
+
+<button class="mode-btn"
+onclick="setHardMode()">
+
+🔥 上級
+
+</button>
+
+</div>
+
+<button class="menu-btn"
+onclick="restartGame()">
+
+▶ スタート
+
+</button>
+
+</div>
+
+<div class="lanes">
+
+<div class="lane" data-lane="0">
+<div class="hit-line"></div>
+</div>
+
+<div class="lane" data-lane="1">
+<div class="hit-line"></div>
+</div>
+
+<div class="lane" data-lane="2">
+<div class="hit-line"></div>
+</div>
+
+<div class="lane" data-lane="3">
+<div class="hit-line"></div>
+</div>
+
+</div>
 
 <div id="combo">
 0
 </div>
 
-<!-- FULL COMBO -->
-
-<div id="fullcombo">
-🌟 FULL COMBO 🌟
 </div>
 
-<!-- スタート -->
-
-<div class="start-menu"
-id="startMenu">
-
-<select
-id="songSelect"
-class="song-select">
-
-<option value="kaze.mp3">
-🎵 KAZE
-</option>
-
-<option value="sky.mp3">
-🌌 SKY DREAM
-</option>
-
-<option value="future.mp3">
-🚀 FUTURE LIVE
-</option>
-
-</select>
-
-<button class="menu-btn"
-onclick="startGame()">
-▶ START
-</button>
-
-</div>
-
-<!-- レーン -->
-
-<div class="lanes">
-
-<div class="lane"
-data-lane="0">
-<div class="hit-line"></div>
-</div>
-
-<div class="lane"
-data-lane="1">
-<div class="hit-line"></div>
-</div>
-
-<div class="lane"
-data-lane="2">
-<div class="hit-line"></div>
-</div>
-
-<div class="lane"
-data-lane="3">
-<div class="hit-line"></div>
-</div>
-
-</div>
-
-<!-- リザルト -->
-
-<div id="result-screen">
-
-<div class="result-title">
-🎉 LIVE CLEAR 🎉
-</div>
-
-<div class="result-text"
-id="result-score">
-SCORE : 0
-</div>
-
-<div class="result-text"
-id="result-combo">
-MAX COMBO : 0
-</div>
-
-<div class="result-text"
-id="result-miss">
-MISS : 0
-</div>
-
-<button class="result-btn"
-onclick="restartGame()">
-▶ RESTART
-</button>
-
-</div>
-
-</div>
-
-<!-- 音楽 -->
-
-<audio id="music"></audio>
+<audio id="music"
+src="kaze.mp3">
+</audio>
 
 <script>
 
-/* 音楽 */
+const SONGS = [
+
+{
+title:"風になる合図",
+artist:"蓮",
+src:"kaze.mp3"
+},
+
+{
+title:"きらめく方程式",
+artist:"DayDream プラス",
+src:"きらめく方程式.mp3"
+}
+
+];
+
+let currentSong = 0;
 
 const music =
-document.getElementById(
-"music"
-);
-
-/* 曲選択 */
-
-const songSelect =
-document.getElementById(
-"songSelect"
-);
-
-const songName =
-document.getElementById(
-"songName"
-);
-
-/* UI */
+document.getElementById("music");
 
 const comboText =
-document.getElementById(
-"combo"
-);
+document.getElementById("combo");
 
 const judgeText =
-document.getElementById(
-"judge"
-);
+document.getElementById("judge");
 
 const scoreText =
-document.getElementById(
-"score"
-);
-
-const fullcombo =
-document.getElementById(
-"fullcombo"
-);
-
-const resultScreen =
-document.getElementById(
-"result-screen"
-);
-
-const resultScore =
-document.getElementById(
-"result-score"
-);
-
-const resultCombo =
-document.getElementById(
-"result-combo"
-);
-
-const resultMiss =
-document.getElementById(
-"result-miss"
-);
-
-const startMenu =
-document.getElementById(
-"startMenu"
-);
-
-/* レーン */
+document.getElementById("score");
 
 const lanes =
-document.querySelectorAll(
-".lane"
-);
-
-/* 状態 */
+document.querySelectorAll(".lane");
 
 let combo = 0;
 let score = 0;
 let miss = 0;
 let maxCombo = 0;
+let totalDeduct = 0;
 
-let started = false;
+let paused = false;
 
-let noteSpeed = 4;
-
-let noteInterval = 380;
-
-let notes = [];
-
-/* コンボ倍率 */
-
-const COMBO_RATES = [
-
-{
-min:101,
-bonus:15
-},
-
-{
-min:51,
-bonus:10
-},
-
-{
-min:32,
-bonus:8
-},
-
-{
-min:12,
-bonus:2.5
-},
-
-{
-min:1,
-bonus:2.0
-}
-
-];
-
-/* スコア表示 */
+let noteSpeed = 3;
+let noteInterval = 450;
 
 function formatScore(val){
 
-return val.toLocaleString();
+const fixed =
+val.toFixed(2);
+
+const parts =
+fixed.split(".");
+
+parts[0] =
+parts[0].replace(
+/\B(?=(\d{3})+(?!\d))/g,
+","
+);
+
+return parts.join(".");
 
 }
 
-/* ノーツ生成 */
+function selectSong(index){
 
-function generateNotes(){
+currentSong = index;
 
-notes = [];
+SONGS.forEach((_,i)=>{
 
-const songLength =
-music.duration * 1000;
-
-for(
-let i = 1000;
-i < songLength;
-i += noteInterval
-){
-
-notes.push({
-
-time:i,
-
-lane:
-Math.floor(
-Math.random() * 4
+document
+.getElementById(
+"songBtn"+i
 )
+.classList.toggle(
+"selected",
+i===index
+);
 
 });
 
 }
-
-}
-
-/* ゲーム開始 */
-
-function startGame(){
-
-if(started) return;
-
-started = true;
-
-startMenu.style.display =
-"none";
-
-/* 曲セット */
-
-music.src =
-songSelect.value;
-
-music.load();
-
-songName.innerText =
-songSelect.options[
-songSelect.selectedIndex
-].text;
-
-music.play();
-
-generateNotes();
-
-gameLoop();
-
-}
-
-/* リスタート */
 
 function restartGame(){
 
-location.reload();
+const song =
+SONGS[currentSong];
+
+music.src =
+song.src;
+
+document.querySelector(
+".song-title"
+).innerText =
+"🎵 " +
+song.title +
+" / " +
+song.artist;
+
+music.currentTime = 0;
+
+music.play();
 
 }
 
-/* ループ */
+function setEasyMode(){
 
-function gameLoop(){
+noteSpeed = 2;
+noteInterval = 650;
 
-const currentTime =
-music.currentTime * 1000;
-
-notes.forEach(note=>{
-
-if(
-!note.spawned &&
-currentTime >= note.time - 2200
-){
-
-createNote(note);
-
-note.spawned = true;
-
-}
-
-});
-
-if(!music.paused){
-
-requestAnimationFrame(
-gameLoop
-);
-
-}
-
-}
-
-/* ノーツ生成 */
-
-function createNote(noteData){
-
-const lane =
-lanes[noteData.lane];
-
-const note =
-document.createElement(
-"div"
-);
-
-note.classList.add(
-"note"
-);
-
-note.dataset.hit =
-"false";
-
-lane.appendChild(note);
-
-let pos = -30;
-
-const move = setInterval(()=>{
-
-pos += noteSpeed;
-
-note.style.top =
-pos + "px";
-
-if(
-pos >= window.innerHeight
-){
-
-if(
-note.dataset.hit === "false"
-){
-
-miss++;
-
-combo = 0;
-
-comboText.innerText =
-combo;
-
-judgeText.style.color =
-"#ff6060";
+restartGame();
 
 judgeText.innerText =
-"MISS ❌";
-
-/* 通過MISS */
-
-score = Math.max(
-0,
-score - 300
-);
-
-scoreText.innerText =
-"Score : " +
-formatScore(score);
+"🌟 EASY MODE";
 
 }
 
-note.remove();
+function setHardMode(){
 
-clearInterval(move);
+noteSpeed = 5;
+noteInterval = 300;
 
-}
+restartGame();
 
-},16);
-
-note.move = move;
+judgeText.innerText =
+"🔥 HARD MODE";
 
 }
 
@@ -846,19 +533,17 @@ note.move = move;
 
 function hitNote(laneIndex){
 
+if(paused) return;
+
 const lane =
 lanes[laneIndex];
 
 const laneNotes =
-lane.querySelectorAll(
-".note"
-);
+lane.querySelectorAll(".note");
 
-/* 空打ち */
+/* 空打ちMISS */
 
-if(
-laneNotes.length === 0
-){
+if(laneNotes.length === 0){
 
 miss++;
 
@@ -873,12 +558,15 @@ judgeText.style.color =
 judgeText.innerText =
 "MISS ❌";
 
-/* 空打ち減点 */
+/* -200 */
 
-score = Math.max(
+score =
+Math.max(
 0,
 score - 200
 );
+
+totalDeduct += 200;
 
 scoreText.innerText =
 "Score : " +
@@ -887,8 +575,6 @@ formatScore(score);
 return;
 
 }
-
-/* ノーツ */
 
 const note =
 laneNotes[0];
@@ -903,9 +589,7 @@ const signedDiff =
 rect.top - hitY;
 
 const diff =
-Math.abs(
-signedDiff
-);
+Math.abs(signedDiff);
 
 const timing =
 signedDiff < 0
@@ -995,12 +679,15 @@ combo = 0;
 comboText.innerText =
 combo;
 
-/* タイミングMISS */
+/* -300 */
 
-score = Math.max(
+score =
+Math.max(
 0,
 score - 300
 );
+
+totalDeduct += 300;
 
 scoreText.innerText =
 "Score : " +
@@ -1010,7 +697,7 @@ return;
 
 }
 
-/* 精度倍率 */
+/* 横バー精度 */
 
 const accuracyRate =
 Math.max(
@@ -1022,11 +709,11 @@ Math.max(
 
 let addScore =
 Math.round(
-(baseScore * accuracyRate)
-/ 10
+(baseScore *
+accuracyRate) / 10
 ) * 10;
 
-/* コンボ */
+/* COMBO */
 
 combo++;
 
@@ -1039,13 +726,40 @@ maxCombo = combo;
 comboText.innerText =
 combo;
 
-/* コンボ倍率 */
+/* 倍率維持 */
+
+const COMBO_RATES = [
+
+{
+min:101,
+bonus:15
+},
+
+{
+min:51,
+bonus:10
+},
+
+{
+min:32,
+bonus:8
+},
+
+{
+min:12,
+bonus:2.5
+},
+
+{
+min:1,
+bonus:2.0
+}
+
+];
 
 let comboBonus = 2.0;
 
-for(
-const r of COMBO_RATES
-){
+for(const r of COMBO_RATES){
 
 if(combo >= r.min){
 
@@ -1058,18 +772,15 @@ break;
 
 }
 
-/* 倍率適用 */
-
 addScore =
 Math.round(
-addScore * comboBonus
+addScore *
+comboBonus
 );
-
-/* スコア加算 */
 
 score += addScore;
 
-/* EXCELLENT BONUS */
+/* BONUS */
 
 if(
 judgeType ===
@@ -1084,8 +795,6 @@ judgeText.innerText =
 
 }
 
-/* PERFECT BONUS */
-
 if(
 judgeType ===
 "PERFECT" &&
@@ -1098,8 +807,6 @@ judgeText.innerText =
 "✨ PERFECT BONUS +10000";
 
 }
-
-/* GREAT BONUS */
 
 if(
 judgeType ===
@@ -1114,8 +821,6 @@ judgeText.innerText =
 
 }
 
-/* GOOD BONUS */
-
 if(
 judgeType ===
 "GOOD" &&
@@ -1129,77 +834,80 @@ judgeText.innerText =
 
 }
 
-/* スコア更新 */
+score =
+Math.round(
+score * 100
+) / 100;
 
 scoreText.innerText =
 "Score : " +
 formatScore(score);
 
-/* ノーツ削除 */
+note.remove();
 
-note.dataset.hit =
-"true";
+}
 
-clearInterval(
-note.move
-);
+/* ノーツ生成 */
+
+function createNote(laneIndex){
+
+const lane =
+lanes[laneIndex];
+
+const note =
+document.createElement("div");
+
+note.classList.add("note");
+
+lane.appendChild(note);
+
+let pos = -30;
+
+const move =
+setInterval(()=>{
+
+if(paused) return;
+
+pos += noteSpeed;
+
+note.style.top =
+pos + "px";
+
+if(
+pos >=
+window.innerHeight
+){
+
+clearInterval(move);
 
 note.remove();
 
-/* エフェクト */
+}
 
-tapEffect(
-lane,
-judgeText.style.color
-);
+},16);
 
 }
 
-/* エフェクト */
+/* デモ生成 */
 
-function tapEffect(
-lane,
-color
-){
+setInterval(()=>{
 
-const effect =
-document.createElement(
-"div"
+createNote(
+Math.floor(
+Math.random() * 4
+)
 );
 
-effect.classList.add(
-"tap-effect"
-);
+},noteInterval);
 
-effect.style.background =
-color;
-
-effect.style.boxShadow =
-"0 0 20px " +
-color +
-",0 0 40px " +
-color;
-
-lane.appendChild(
-effect
-);
-
-setTimeout(()=>{
-
-effect.remove();
-
-},250);
-
-}
-
-/* スマホ */
+/* タップ */
 
 lanes.forEach(
 (lane,index)=>{
 
 lane.addEventListener(
 "touchstart",
-(e)=>{
+e=>{
 
 e.preventDefault();
 
@@ -1212,61 +920,73 @@ hitNote(index);
 }
 );
 
-/* PC */
+/* キーボード */
 
 document.addEventListener(
 "keydown",
-(e)=>{
+e=>{
 
-if(e.key === "d"){
+if(e.key==="d"){
 hitNote(0);
 }
 
-if(e.key === "f"){
+if(e.key==="f"){
 hitNote(1);
 }
 
-if(e.key === "j"){
+if(e.key==="j"){
 hitNote(2);
 }
 
-if(e.key === "k"){
+if(e.key==="k"){
 hitNote(3);
 }
 
 }
 );
 
-/* 曲終了 */
+function pauseGame(){
 
-music.addEventListener(
-"ended",
-()=>{
+if(!paused){
 
-if(miss === 0){
+music.pause();
 
-fullcombo.style.display =
-"block";
+paused = true;
+
+judgeText.innerText =
+"⏸ PAUSE";
+
+}else{
+
+music.play();
+
+paused = false;
+
+judgeText.innerText =
+"▶ RESUME";
+
+}
 
 }
 
-resultScore.innerText =
-"SCORE : " +
-formatScore(score);
+function resetScore(){
 
-resultCombo.innerText =
-"MAX COMBO : " +
-maxCombo;
+score = 0;
 
-resultMiss.innerText =
-"MISS : " +
-miss;
+combo = 0;
 
-resultScreen.style.display =
-"flex";
+miss = 0;
+
+scoreText.innerText =
+"Score : 0.00";
+
+comboText.innerText =
+"0";
+
+judgeText.innerText =
+"READY";
 
 }
-);
 
 </script>
 
