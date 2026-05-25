@@ -1305,8 +1305,8 @@ judgeText.style.color = "#ff6060";
 judgeText.innerText =
 "MISS ❌";
 
-/* ノート通過ミス減点 */
-const deduct = 200;
+/* ノート通過ミス減点 -1000 */
+const deduct = 1000;
 totalDeduct += deduct;
 score = Math.max(0, score - deduct);
 scoreText.innerText =
@@ -1339,12 +1339,18 @@ lane.querySelectorAll(".note");
 
 if(laneNotes.length === 0){
 
-/* 空タップ → MISSカウント・コンボリセット・減点なし */
+/* 空タップ → MISSカウント・コンボリセット・-500点 */
 miss++;
 combo = 0;
 comboText.innerText = combo;
 judgeText.style.color = "#ff6060";
 judgeText.innerText = "MISS ❌";
+
+const deduct = 500;
+totalDeduct += deduct;
+score = Math.max(0, score - deduct);
+scoreText.innerText =
+"Score : " + score;
 
 return;
 
@@ -1378,7 +1384,7 @@ judgeText.style.color = "#ffe066";
 judgeText.innerText =
 "PERFECT ✨";
 
-addScore = 666667;
+addScore = 10000;
 
 /* GREAT EARLY/LATE */
 }else if(diff < 160){
@@ -1387,7 +1393,7 @@ judgeText.style.color = "#66dfff";
 judgeText.innerText =
 "GREAT 🔥" + timing;
 
-addScore = 400000;
+addScore = 5000;
 
 /* GOOD EARLY/LATE */
 }else if(diff < 220){
@@ -1396,7 +1402,7 @@ judgeText.style.color = "#a0ff88";
 judgeText.innerText =
 "GOOD 👍" + timing;
 
-addScore = 200000;
+addScore = 2000;
 
 /* MISS */
 }else{
@@ -1411,8 +1417,8 @@ combo = 0;
 comboText.innerText =
 combo;
 
-/* タイミングミス減点 */
-const deduct = 200;
+/* タイミングミス減点 -1000 */
+const deduct = 1000;
 totalDeduct += deduct;
 score = Math.max(0, score - deduct);
 scoreText.innerText =
