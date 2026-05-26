@@ -440,7 +440,7 @@ margin-top:4px;
 #add-song-label{
 display:block;
 width:100%;
-padding:10px 16px;
+padding:12px 16px;
 border-radius:14px;
 border:2px dashed rgba(140,232,255,0.5);
 background:transparent;
@@ -448,15 +448,7 @@ color:#8ce8ff;
 font-size:14px;
 font-weight:bold;
 text-align:center;
-cursor:pointer;
-transition:
-background 0.2s,
-border-color 0.2s;
-}
-
-#add-song-label:active{
-background:rgba(140,232,255,0.15);
-border-color:#8ce8ff;
+pointer-events:none;
 }
 
 /* 曲選択メニュー */
@@ -954,18 +946,28 @@ style="background:rgba(255,255,255,0.2);color:white;box-shadow:0 0 10px rgba(255
 <!-- 曲追加エリア -->
 <div id="add-song-area">
 
-<button id="add-song-label"
-onclick="document.getElementById('add-song-input').click()">
-➕ 曲を追加する
-</button>
+<div style="position:relative;width:100%;">
 
 <input
 type="file"
 id="add-song-input"
 accept="audio/*"
-style="display:none;position:absolute;left:-9999px;"
 onchange="addSongFromFile(this)"
+style="
+position:absolute;
+top:0;left:0;
+width:100%;height:100%;
+opacity:0;
+z-index:10;
+cursor:pointer;
+"
 >
+
+<div id="add-song-label">
+➕ 曲を追加する
+</div>
+
+</div>
 
 </div>
 
