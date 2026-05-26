@@ -908,6 +908,12 @@ style="color:#ff7070;">-0</span>
 style="color:#ffe066;">0%</span>
 </div>
 
+<div class="result-row">
+<span class="result-label">FAILURE RATE</span>
+<span class="result-value" id="result-failure"
+style="color:#ff7070;">0%</span>
+</div>
+
 </div>
 
 <!-- 100%達成メッセージ -->
@@ -1102,6 +1108,46 @@ if(!el) return;
 el.currentTime = 0;
 el.play().catch(()=>{});
 }
+
+/* iOS音声アンロック：最初のタップで全SEを解放 */
+let audioUnlocked = false;
+
+function unlockAudio(){
+
+if(audioUnlocked) return;
+audioUnlocked = true;
+
+const seIds = [
+"se-combo30",
+"se-combo50",
+"se-combo70",
+"se-combo100",
+"se-miss"
+];
+
+seIds.forEach(id=>{
+const el =
+document.getElementById(id);
+if(!el) return;
+el.volume = 0;
+el.play()
+.then(()=>{ el.pause(); el.volume = 1; })
+.catch(()=>{ el.volume = 1; });
+});
+
+}
+
+document.addEventListener(
+"touchstart",
+unlockAudio,
+{ once: true, passive: true }
+);
+
+document.addEventListener(
+"mousedown",
+unlockAudio,
+{ once: true }
+);
 
 /* 曲データ ─ ここにオブジェクトを追加するだけで曲選択に自動反映 */
 const SONGS = [
@@ -2132,6 +2178,9 @@ hitNote(3);
 const resultAccuracyEl =
 document.getElementById("result-accuracy");
 
+const resultFailureEl =
+document.getElementById("result-failure");
+
 const resultPerfectMsg =
 document.getElementById("result-perfect-msg");
 
@@ -2152,6 +2201,8 @@ const accuracy = totalNotes > 0
 ((totalNotes - noteMiss) / totalNotes) * 100
 ))
 : 0;
+
+const failure = Math.max(0, 100 - accuracy);
 
 /* ① ゲーム画面に成功率を大きく表示 */
 const overlay =
@@ -2202,6 +2253,7 @@ resultMissEl.innerText = miss;
 resultDeductEl.innerText = "-" + totalDeduct;
 
 resultAccuracyEl.innerText = accuracy + "%";
+resultFailureEl.innerText = failure + "%";
 
 if(accuracy === 100){
 resultPerfectMsg.style.display = "block";
