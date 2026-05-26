@@ -2194,12 +2194,13 @@ music.addEventListener(
 
 judgeText.innerText = "";
 
-/* 成功率計算：ノート通過ミスのみで計算（totalNotesベース） */
-const noteMiss = totalNotes - hitNotes;
-const accuracy = totalNotes > 0
-? Math.max(0, Math.round(
-((totalNotes - noteMiss) / totalNotes) * 100
-))
+/* 成功・失敗率：全ミス(miss)をtotalNotesで割る
+   空タップで miss > totalNotes になる場合も考慮 */
+const baseDenom = Math.max(totalNotes, miss);
+const accuracy = baseDenom > 0
+? Math.max(0, Math.min(100, Math.round(
+((baseDenom - miss) / baseDenom) * 100
+)))
 : 0;
 
 const failure = Math.max(0, 100 - accuracy);
@@ -2214,18 +2215,24 @@ document.getElementById("accuracy-number")
 document.getElementById("accuracy-label")
 .innerText = "SUCCESS RATE";
 
+document.getElementById("accuracy-number")
+.innerText = accuracy + "%";
+
 const subEl =
 document.getElementById("accuracy-sub");
+
+const failureLabel = failure > 0
+? `FAILURE : ${failure}%` : "";
 
 if(accuracy === 100){
 subEl.innerText =
 "🏆 SUPER EXCELLENT\nCONGRATULATIONS! 🏆";
 }else if(accuracy >= 90){
-subEl.innerText = "⭐ EXCELLENT!";
+subEl.innerText = "⭐ EXCELLENT!\n" + failureLabel;
 }else if(accuracy >= 70){
-subEl.innerText = "👏 GREAT JOB!";
+subEl.innerText = "👏 GREAT JOB!\n" + failureLabel;
 }else{
-subEl.innerText = "";
+subEl.innerText = failureLabel;
 }
 
 overlay.style.display = "flex";
