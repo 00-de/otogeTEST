@@ -946,26 +946,74 @@ style="background:rgba(255,255,255,0.2);color:white;box-shadow:0 0 10px rgba(255
 <!-- 曲追加エリア -->
 <div id="add-song-area">
 
-<div style="position:relative;width:100%;">
+<div id="add-song-form">
 
 <input
-type="file"
-id="add-song-input"
-accept="audio/*"
-onchange="addSongFromFile(this)"
+type="text"
+id="add-song-title"
+placeholder="曲名"
 style="
-position:absolute;
-top:0;left:0;
-width:100%;height:100%;
-opacity:0;
-z-index:10;
-cursor:pointer;
+width:100%;
+padding:8px 12px;
+border-radius:10px;
+border:1px solid rgba(140,232,255,0.4);
+background:rgba(255,255,255,0.1);
+color:white;
+font-size:14px;
+margin-bottom:6px;
+box-sizing:border-box;
 "
 >
 
-<div id="add-song-label">
+<input
+type="text"
+id="add-song-artist"
+placeholder="アーティスト名"
+style="
+width:100%;
+padding:8px 12px;
+border-radius:10px;
+border:1px solid rgba(140,232,255,0.4);
+background:rgba(255,255,255,0.1);
+color:white;
+font-size:14px;
+margin-bottom:6px;
+box-sizing:border-box;
+"
+>
+
+<input
+type="text"
+id="add-song-filename"
+placeholder="ファイル名（例：mysong.mp3）"
+style="
+width:100%;
+padding:8px 12px;
+border-radius:10px;
+border:1px solid rgba(140,232,255,0.4);
+background:rgba(255,255,255,0.1);
+color:white;
+font-size:14px;
+margin-bottom:6px;
+box-sizing:border-box;
+"
+>
+
+<button
+onclick="addSongFromInput()"
+style="
+width:100%;
+padding:10px;
+border-radius:12px;
+border:none;
+background:rgba(140,232,255,0.25);
+color:#8ce8ff;
+font-size:14px;
+font-weight:bold;
+border:1px solid rgba(140,232,255,0.4);
+">
 ➕ 曲を追加する
-</div>
+</button>
 
 </div>
 
@@ -1134,53 +1182,62 @@ buildSongList();
 
 }
 
-/* ファイルから曲を追加 */
-function addSongFromFile(input){
+/* 入力から曲を追加 */
+function addSongFromInput(){
 
-const file = input.files[0];
-if(!file) return;
+const title =
+document.getElementById("add-song-title")
+.value.trim();
 
-const url =
-URL.createObjectURL(file);
+const artist =
+document.getElementById("add-song-artist")
+.value.trim() || "アーティスト不明";
 
-/* ファイル名から拡張子を除いてタイトルに */
-const rawName = file.name.replace(
-/\.[^/.]+$/, ""
-);
+const filename =
+document.getElementById("add-song-filename")
+.value.trim();
 
-/* 仮のオーディオで曲長さを取得 */
-const tmpAudio =
-new Audio(url);
+if(!title){
+alert("曲名を入力してください");
+return;
+}
+
+if(!filename){
+alert("ファイル名を入力してください");
+return;
+}
+
+const tmpAudio = new Audio(filename);
 
 tmpAudio.addEventListener(
 "loadedmetadata",
 ()=>{
 
-const newSong = {
-title: rawName,
-artist: "追加曲",
-src: url,
-isLocal: true,
-duration: tmpAudio.duration
-};
+SONGS.push({
+title: title,
+artist: artist,
+src: filename,
+isLocal: false
+});
 
-SONGS.push(newSong);
-
-/* 追加した曲を選択状態に */
 currentSong = SONGS.length - 1;
 
 buildSongList();
 
-/* inputをリセット（同じファイル再選択可能に） */
-input.value = "";
+document.getElementById("add-song-title").value = "";
+document.getElementById("add-song-artist").value = "";
+document.getElementById("add-song-filename").value = "";
 
 },
 { once: true }
 );
 
 tmpAudio.onerror = ()=>{
-alert("音楽ファイルの読み込みに失敗しました");
-input.value = "";
+alert(
+"ファイルが見つかりません。\n" +
+"index.htmlと同じフォルダに\n「" +
+filename + "」を置いてください"
+);
 };
 
 }
