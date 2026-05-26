@@ -331,6 +331,63 @@ box-shadow:
 0 0 35px #8ce8ff;
 }
 
+.song-delete-btn{
+float:right;
+font-size:12px;
+color:rgba(255,100,100,0.8);
+margin-left:8px;
+padding:2px 4px;
+border-radius:6px;
+background:rgba(255,100,100,0.15);
+}
+
+.song-delete-btn:active{
+background:rgba(255,100,100,0.4);
+}
+
+/* 進行バー */
+#progress-bar-wrap{
+position:absolute;
+top: 48px;
+left: 0;
+width: 100%;
+z-index: 100;
+display: none;
+flex-direction: column;
+align-items: flex-end;
+padding: 0 10px;
+gap: 2px;
+}
+
+#progress-bar{
+width: 100%;
+height: 4px;
+background: rgba(255,255,255,0.2);
+border-radius: 4px;
+overflow: hidden;
+position: relative;
+}
+
+#progress-bar::after{
+content: "";
+position: absolute;
+top: 0; left: 0;
+height: 100%;
+width: 0%;
+background: linear-gradient(
+90deg, #8ce8ff, #ffffff
+);
+box-shadow: 0 0 8px #8ce8ff;
+border-radius: 4px;
+transition: width 0.5s linear;
+}
+
+#progress-time{
+font-size: 11px;
+color: rgba(255,255,255,0.7);
+font-weight: bold;
+}
+
 /* ダブルノート（上級） */
 .note.double{
 background:
@@ -371,6 +428,33 @@ opacity:0;
 transform:scaleY(2);
 }
 
+}
+
+/* 曲追加エリア */
+#add-song-area{
+width:100%;
+max-width:280px;
+margin-top:4px;
+}
+
+#add-song-label{
+display:block;
+padding:10px 16px;
+border-radius:14px;
+border:2px dashed rgba(140,232,255,0.5);
+color:#8ce8ff;
+font-size:14px;
+font-weight:bold;
+text-align:center;
+cursor:pointer;
+transition:
+background 0.2s,
+border-color 0.2s;
+}
+
+#add-song-label:active{
+background:rgba(140,232,255,0.15);
+border-color:#8ce8ff;
 }
 
 /* 曲選択メニュー */
@@ -717,6 +801,12 @@ Score : 0.00
 
 </div>
 
+<!-- 進行バー -->
+<div id="progress-bar-wrap">
+<div id="progress-bar"></div>
+<div id="progress-time">0:00 / 0:00</div>
+</div>
+
 <!-- コントロール（プレイ中は左下へ） -->
 <div class="controls" id="controls">
 
@@ -855,21 +945,24 @@ style="background:rgba(255,255,255,0.2);color:white;box-shadow:0 0 10px rgba(255
 
 <div class="song-select-title">🎵 SELECT SONG</div>
 
-<div class="song-list">
+<div class="song-list" id="songList">
+<!-- JSで動的生成 -->
+</div>
 
-<button class="song-btn selected"
-id="songBtn0"
-onclick="selectSong(0)">
-<span class="song-btn-title">風になる合図</span>
-<span class="song-btn-artist">蓮</span>
-</button>
+<!-- 曲追加エリア -->
+<div id="add-song-area">
 
-<button class="song-btn"
-id="songBtn1"
-onclick="selectSong(1)">
-<span class="song-btn-title">きらめく方程式</span>
-<span class="song-btn-artist">DayDream プラス</span>
-</button>
+<label id="add-song-label" for="add-song-input">
+➕ 曲を追加する
+</label>
+
+<input
+type="file"
+id="add-song-input"
+accept="audio/*"
+style="display:none;"
+onchange="addSongFromFile(this)"
+>
 
 </div>
 
@@ -993,7 +1086,7 @@ el.currentTime = 0;
 el.play().catch(()=>{});
 }
 
-/* 曲データ */
+/* 曲データ ─ ここにオブジェクトを追加するだけで曲選択に自動反映 */
 const SONGS = [
 {
 title: "風になる合図",
@@ -1005,28 +1098,184 @@ title: "きらめく方程式",
 artist: "DayDream プラス",
 src: "きらめく方程式.mp3"
 }
+/* ↓ 3曲目以降はここに追加
+,{
+title: "曲名",
+artist: "アーティスト名",
+src: "ファイル名.mp3"
+}
+*/
 ];
 
 let currentSong = 0;
+
+/* 曲を削除 */
+function deleteSong(e, index){
+
+e.stopPropagation();
+
+/* BlobURLを解放 */
+if(SONGS[index].isLocal){
+URL.revokeObjectURL(SONGS[index].src);
+}
+
+SONGS.splice(index, 1);
+
+if(currentSong >= SONGS.length){
+currentSong = SONGS.length - 1;
+}
+
+buildSongList();
+
+}
+
+/* ファイルから曲を追加 */
+function addSongFromFile(input){
+
+const file = input.files[0];
+if(!file) return;
+
+const url =
+URL.createObjectURL(file);
+
+/* ファイル名から拡張子を除いてタイトルに */
+const rawName = file.name.replace(
+/\.[^/.]+$/, ""
+);
+
+/* 仮のオーディオで曲長さを取得 */
+const tmpAudio =
+new Audio(url);
+
+tmpAudio.addEventListener(
+"loadedmetadata",
+()=>{
+
+const newSong = {
+title: rawName,
+artist: "追加曲",
+src: url,
+isLocal: true,
+duration: tmpAudio.duration
+};
+
+SONGS.push(newSong);
+
+/* 追加した曲を選択状態に */
+currentSong = SONGS.length - 1;
+
+buildSongList();
+
+/* inputをリセット（同じファイル再選択可能に） */
+input.value = "";
+
+},
+{ once: true }
+);
+
+tmpAudio.onerror = ()=>{
+alert("音楽ファイルの読み込みに失敗しました");
+input.value = "";
+};
+
+}
+
+/* 曲リストを動的生成 */
+function buildSongList(){
+
+const list =
+document.getElementById("songList");
+
+list.innerHTML = "";
+
+SONGS.forEach((song, i)=>{
+
+const btn =
+document.createElement("button");
+
+btn.className =
+"song-btn" +
+(i === currentSong ? " selected" : "");
+
+btn.id = "songBtn" + i;
+
+/* ローカル曲は削除ボタン付き */
+const deleteBtn = song.isLocal
+? `<span class="song-delete-btn"
+onclick="deleteSong(event,${i})">✕</span>`
+: "";
+
+btn.innerHTML =
+`<span class="song-btn-title">
+${song.title}${deleteBtn}
+</span>
+<span class="song-btn-artist">
+${song.artist}
+</span>`;
+
+btn.onclick = ()=> selectSong(i);
+
+list.appendChild(btn);
+
+});
+
+}
+
+/* 進行バー更新 */
+const progressWrap =
+document.getElementById("progress-bar-wrap");
+
+const progressBar =
+document.getElementById("progress-bar");
+
+const progressTime =
+document.getElementById("progress-time");
+
+function formatTime(sec){
+const m = Math.floor(sec / 60);
+const s = Math.floor(sec % 60)
+.toString().padStart(2,"0");
+return m + ":" + s;
+}
+
+function updateProgress(){
+
+if(!started || paused) return;
+
+const cur = music.currentTime;
+const dur = music.duration || 1;
+const pct = Math.min(cur / dur * 100, 100);
+
+progressBar.style.setProperty(
+"--prog", pct + "%"
+);
+
+/* ::afterのwidthをCSS変数で制御 */
+progressBar.querySelector ?
+null : null;
+
+/* 直接styleで制御 */
+progressBar.style.background =
+`linear-gradient(90deg,
+#8ce8ff ${pct}%,
+rgba(255,255,255,0.2) ${pct}%
+)`;
+
+progressTime.innerText =
+formatTime(cur) +
+" / " +
+formatTime(dur);
+
+requestAnimationFrame(updateProgress);
+
+}
 
 /* 曲選択 */
 function selectSong(index){
 
 currentSong = index;
 
-/* ボタンのハイライト */
-SONGS.forEach((_,i)=>{
-const btn =
-document.getElementById(
-"songBtn" + i
-);
-if(btn){
-btn.classList.toggle(
-"selected",
-i === index
-);
-}
-});
+buildSongList();
 
 }
 /* 拡大防止 */
@@ -1270,6 +1519,9 @@ started = true;
 
 startMenuEl.style.display = "none";
 
+/* 進行バー表示 */
+progressWrap.style.display = "flex";
+
 /* プレイ中UI切り替え */
 setPlayingUI(true);
 
@@ -1279,12 +1531,14 @@ music.play();
 if(music.duration && !isNaN(music.duration)){
 generateNotes();
 gameLoop();
+updateProgress();
 }else{
 music.addEventListener(
 "loadedmetadata",
 ()=>{
 generateNotes();
 gameLoop();
+updateProgress();
 },
 { once: true }
 );
@@ -1752,6 +2006,8 @@ resultScreen.style.display = "none";
 
 setPlayingUI(false);
 
+progressWrap.style.display = "none";
+
 startMenuEl.style.display = "flex";
 
 }
@@ -1952,6 +2208,8 @@ resultScreen.style.display = "flex";
 /* プレイ終了UIに戻す */
 setPlayingUI(false);
 
+progressWrap.style.display = "none";
+
 }, 400);
 
 }, 2500);
@@ -1977,6 +2235,9 @@ if("serviceWorker" in navigator){
       .catch(err => console.log("SW error:", err));
   });
 }
+
+/* 起動時に曲リスト生成 */
+buildSongList();
 
 </script>
 
