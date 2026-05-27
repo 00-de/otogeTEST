@@ -388,6 +388,36 @@ color: rgba(255,255,255,0.7);
 font-weight: bold;
 }
 
+/* コンボ画像オーバーレイ */
+#combo-img-overlay{
+position:absolute;
+top:50%;
+left:50%;
+transform:translate(-50%,-50%) scale(0.5);
+z-index:200;
+display:none;
+pointer-events:none;
+opacity:0;
+transition:
+opacity 0.25s ease,
+transform 0.25s cubic-bezier(0.34,1.56,0.64,1);
+}
+
+#combo-img-overlay.show{
+opacity:1;
+transform:translate(-50%,-50%) scale(1);
+}
+
+#combo-img-overlay img{
+width:220px;
+height:220px;
+border-radius:50%;
+object-fit:cover;
+box-shadow:
+0 0 30px rgba(255,255,255,0.8),
+0 0 60px rgba(140,232,255,0.6);
+}
+
 /* ダブルノート（上級） */
 .note.double{
 background:
@@ -861,6 +891,11 @@ onclick="setHardMode()">
 READY
 </div>
 
+<!-- コンボ画像オーバーレイ -->
+<div id="combo-img-overlay">
+<img id="combo-img" src="" alt="">
+</div>
+
 <!-- フルコン -->
 <div id="fullcombo">
 🌟 FULL COMBO 🌟
@@ -1090,6 +1125,61 @@ btn.innerText = "✕";
 
 }
 );
+
+/* コンボ達成画像データ */
+const COMBO_IMAGES = {
+30:  ["30.jfif","aoi30.jfif","daichi30.jfif"],
+50:  ["50.jfif","aoi50.jfif","ren50.jfif"],
+70:  ["70.jfif","aoi70.jfif","ren70.jfif","yuma70.jfif"],
+100: ["100.jfif","aoi100.jfif"],
+150: ["150.jfif","yuma150.jfif"],
+200: ["200.jfif"]
+};
+
+let comboImgTimer = null;
+
+function showComboImage(comboCount){
+
+const imgs = COMBO_IMAGES[comboCount];
+if(!imgs || imgs.length === 0) return;
+
+/* ランダムに1枚選ぶ */
+const src =
+imgs[Math.floor(Math.random() * imgs.length)];
+
+const overlay =
+document.getElementById("combo-img-overlay");
+
+const img =
+document.getElementById("combo-img");
+
+/* 前のタイマーをクリア */
+if(comboImgTimer){
+clearTimeout(comboImgTimer);
+}
+
+img.src = src;
+overlay.style.display = "block";
+
+requestAnimationFrame(()=>{
+requestAnimationFrame(()=>{
+overlay.classList.add("show");
+});
+});
+
+/* 2秒後にフェードアウト */
+comboImgTimer = setTimeout(()=>{
+
+overlay.classList.remove("show");
+
+setTimeout(()=>{
+overlay.style.display = "none";
+img.src = "";
+}, 300);
+
+}, 2000);
+
+}
 
 /* スコア表示フォーマット（カンマ区切り・小数2桁） */
 function formatScore(val){
@@ -1933,46 +2023,58 @@ note.remove();
 /* 演出 */
 tapEffect(lane, judgeText.style.color);
 
-/* コンボ演出 + SE */
-if(combo >= 100 && combo % 100 === 0){
+/* コンボ演出 + SE + 画像 */
+if(combo >= 200 && combo % 200 === 0){
 
 playSE("se-combo100");
+showComboImage(200);
+judgeText.style.color = "#ff44ff";
+judgeText.innerText = "🌟 " + combo + " COMBO 🌟";
+
+}else if(combo === 150){
+
+playSE("se-combo100");
+showComboImage(150);
+judgeText.style.color = "#ff44ff";
+judgeText.innerText = "🌟 150 COMBO 🌟";
+
+}else if(combo >= 100 && combo % 100 === 0){
+
+playSE("se-combo100");
+showComboImage(100);
 judgeText.style.color = "#ff66cc";
-judgeText.innerText =
-"🔥 AMAZING COMBO 🔥";
+judgeText.innerText = "🔥 AMAZING COMBO 🔥";
 
 }else if(combo === 70){
 
 playSE("se-combo70");
+showComboImage(70);
 judgeText.style.color = "#ff66cc";
-judgeText.innerText =
-"70 COMBO 🔥";
+judgeText.innerText = "70 COMBO 🔥";
 
 }else if(combo === 50){
 
 playSE("se-combo50");
+showComboImage(50);
 judgeText.style.color = "#ff66cc";
-judgeText.innerText =
-"50 COMBO 🔥";
+judgeText.innerText = "50 COMBO 🔥";
 
 }else if(combo === 30){
 
 playSE("se-combo30");
+showComboImage(30);
 judgeText.style.color = "#ffe066";
-judgeText.innerText =
-"30 COMBO 🔥";
+judgeText.innerText = "30 COMBO 🔥";
 
 }else if(combo >= 50){
 
 judgeText.style.color = "#ff66cc";
-judgeText.innerText =
-"🔥 AMAZING COMBO 🔥";
+judgeText.innerText = "🔥 AMAZING COMBO 🔥";
 
 }else if(combo % 10 === 0){
 
 judgeText.style.color = "#ffe066";
-judgeText.innerText =
-combo + " COMBO 🔥";
+judgeText.innerText = combo + " COMBO 🔥";
 
 }
 
