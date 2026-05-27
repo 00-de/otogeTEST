@@ -388,10 +388,10 @@ color: rgba(255,255,255,0.7);
 font-weight: bold;
 }
 
-/* コンボ画像オーバーレイ */
+/* コンボ画像オーバーレイ：判定ライン(bottom:130px)の下エリアに表示 */
 #combo-img-overlay{
 position:absolute;
-bottom:135px;
+bottom:10px;
 left:50%;
 transform:translateX(-50%) scale(0.5);
 z-index:200;
@@ -409,8 +409,8 @@ transform:translateX(-50%) scale(1);
 }
 
 #combo-img-overlay img{
-width:160px;
-height:160px;
+width:110px;
+height:110px;
 border-radius:50%;
 object-fit:cover;
 box-shadow:
@@ -1852,7 +1852,7 @@ signedDiff < 0 ? " ⏩EARLY" : " ⏪LATE";
 
 let addScore = 0;
 
-/* EXCELLENT（最高精度：diff < 40） */
+/* EXCELLENT（diff < 44：約10%拡大） */
 if(diff < 44){
 
 judgeText.style.color = "#ff44ff";
@@ -1878,7 +1878,7 @@ judgeText.innerText =
 
 addScore += streakBonus;
 
-/* PERFECT */
+/* PERFECT（diff < 110：約10%拡大） */
 }else if(diff < 110){
 
 judgeText.style.color = "#ffe066";
@@ -1903,7 +1903,7 @@ judgeText.innerText =
 
 addScore += streakBonus;
 
-/* GREAT */
+/* GREAT（diff < 176：約10%拡大） */
 }else if(diff < 176){
 
 judgeText.style.color = "#66dfff";
@@ -1928,7 +1928,7 @@ judgeText.innerText =
 
 addScore += streakBonus;
 
-/* GOOD */
+/* GOOD（diff < 242：約10%拡大） */
 }else if(diff < 242){
 
 judgeText.style.color = "#a0ff88";
