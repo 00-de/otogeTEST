@@ -388,11 +388,7 @@ color: rgba(255,255,255,0.7);
 font-weight: bold;
 }
 
-/* コンボ画像オーバーレイ
-   - 判定ライン(bottom:130px)の下エリア(bottom:10px)に表示
-   - pointer-events:none でノーツのタップを妨げない
-   - opacity:0.62 で半透明表示
-*/
+/* コンボ画像オーバーレイ：判定ライン下・半透明・タップ貫通 */
 #combo-img-overlay{
 position:absolute;
 bottom:10px;
@@ -2239,23 +2235,36 @@ judgeText.innerText =
 
 }
 
-/* スマホ操作 */
-lanes.forEach(
-(lane,index)=>{
-
-lane.addEventListener(
+/* スマホ操作（マルチタッチ対応：2レーン同時タップ可） */
+document.querySelector(".lanes").addEventListener(
 "touchstart",
 (e)=>{
 
 e.preventDefault();
 
-hitNote(index);
+/* 同時に押された全タッチ点を処理（重複レーンは1回のみ） */
+const touched = new Set();
+
+for(let i = 0; i < e.changedTouches.length; i++){
+
+const t = e.changedTouches[i];
+const el = document.elementFromPoint(
+t.clientX, t.clientY
+);
+const laneEl = el ? el.closest(".lane") : null;
+
+if(laneEl){
+const idx = parseInt(laneEl.dataset.lane);
+if(!isNaN(idx) && !touched.has(idx)){
+touched.add(idx);
+hitNote(idx);
+}
+}
+
+}
 
 },
 { passive:false }
-);
-
-}
 );
 
 /* PC操作 */
